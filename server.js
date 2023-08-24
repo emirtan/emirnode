@@ -80,7 +80,7 @@ const items = [
   
 
 // CREATE
-app.post('/api/items', (req, res) => {
+app.post('/createEmployee', (req, res) => {
     // Yeni bir öğe eklemek için veritabanına kayıt ekleyin
     const newItem = new Item({
         experience: req.body.experience,
@@ -106,16 +106,25 @@ app.post('/api/items', (req, res) => {
     // Tüm öğeleri listelemek için veritabanından(array) verileri çekin
   });
   
+  app.get('/employees', (req, res) => {
+    Item.find({}, (err, items) => {
+      if (err) {
+        res.status(500).json({ error: 'Data couldnt read' });
+      } else {
+        res.status(200).json(items);
+      }
+    });
+  });
 
-  app.get('/api/items/:id', (req, res) => {
+  app.get('/employees/:id', (req, res) => {
     const itemId = req.params.id;
 
     Item.findById(itemId, (err, item) => {
       if (err) {
-        res.status(500).json({ error: 'Veri okunamadı' });
+        res.status(500).json({ error: 'Data couldnt read' });
       } else {
         if (!item) {
-          res.status(404).json({ error: 'Öğe bulunamadı' });
+          res.status(404).json({ error: 'Data couldnt found' });
         } else {
           res.status(200).json(item);
         }
@@ -123,15 +132,15 @@ app.post('/api/items', (req, res) => {
     });
 
     // Belirli bir öğeyi almak için veritabanından veriyi çekin
-  });
+    });
   
   // UPDATE
-  app.put('/api/items/:id', (req, res) => {
+  app.put('/employees/:id', (req, res) => {
     // Bir öğeyi güncellemek için veritabanında güncelleme yapın
   });
   
   // DELETE
-  app.delete('/api/items/:id', (req, res) => {
+  app.delete('/employees/:id', (req, res) => {
     // Bir öğeyi silmek için veritabanından veriyi kaldırın
   });
   
