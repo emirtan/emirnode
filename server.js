@@ -3,7 +3,22 @@ const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { Schema } = mongoose;
 
+const schema = new mongoose.Schema({
+        experience: Number,
+        id: Number,
+        answer:{
+            question: Number,
+            current: String,
+            target: String
+       }
+});
+
+const Kitten = mongoose.model('Kitten', schema);
+app.use(bodyParser.json());
+
+ 
 //const dbURI = 'mongodb://localhost:27017/veritabani_adi'; // Veritabanı bağlantı adresini belirt
 const items = [
     { id: 1, question: 'Computer Vision' },
@@ -78,27 +93,30 @@ const items = [
     { id: 70, question: 'Vue JS' },
   ];
   
-
 // CREATE
-app.post('/createEmployee', (req, res) => {
-    // Yeni bir öğe eklemek için veritabanına kayıt ekleyin
-    const newItem = new Item({
+app.post('/createEmployee', bodyParser.json(), (req, res) => {
+    //Yeni bir öğe eklemek için veritabanına kayıt ekleyin
+    console.log(req.body)
+    const newItem = new Kitten({
         experience: req.body.experience,
         id: req.body.id,
         current: req.body.current,
         answers: req.body.answers,
-        question: req.body.target,
+        question: req.body.question,
         target: req.body.target
       });
-    
-      newItem.save((err, item) => {
-        if (err) {
-          res.status(500).json({ error: 'Veri kaydedilemedi' });
-        } else {
-          res.status(201).json(item);
-        }
+
+      newItem.save()
+      .then((item) => {
+        res.status(201).json(item);
+
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).json({ error: 'Veri kaydedilemedi' });
       });
   });
+
     
   // Get all questions
   app.get('/questions', (req, res) => {
@@ -107,7 +125,7 @@ app.post('/createEmployee', (req, res) => {
   });
   
   app.get('/employees', (req, res) => {
-    Item.find({}, (err, items) => {
+    Kitten.find({}, (err, items) => {
       if (err) {
         res.status(500).json({ error: 'Data couldnt read' });
       } else {
@@ -119,7 +137,7 @@ app.post('/createEmployee', (req, res) => {
   app.get('/employees/:id', (req, res) => {
     const itemId = req.params.id;
 
-    Item.findById(itemId, (err, item) => {
+    Kitten.findById(itemId, (err, item) => {
       if (err) {
         res.status(500).json({ error: 'Data couldnt read' });
       } else {
